@@ -1,4 +1,4 @@
-									Image Upload API
+							Image Upload API
 
 
 This repository contains code for an image upload API built using Node.js, Express.js, and MongoDB. It allows users to upload images to the server and retrieve them later.
