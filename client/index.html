@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Image to API</title>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10%;
+      margin-left: 15%;
+      margin-top: 10%;
+      background-color: aqua;
+      width: 40%;
+      height: 50%;
+      border: 6px solid green;
+    }
+
+    h1 {
+      top: 30%;
+    }
+
+    #fileInput {
+      display: block;
+      padding-left: 10%;
+      padding-bottom: 10%;
+    }
+
+    #uploadButton {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #uploadButton:hover {
+      background-color: #0056b3;
+    }
+
+    #showImagesButton {
+      margin-top: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #showImagesButton:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Image Upload</h1>
+    <input type="file" id="fileInput">
+    <label for="fileInput" id="uploadButton">Upload Image</label>
+    <button id="showImagesButton">Show Uploaded Images</button>
+  </div>
+
+  <script>
+    document.getElementById('uploadButton').addEventListener('click', function() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      fetch('http://localhost:3000/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const imageUrl = data.imageUrl;
+        alert('Upload successful');
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Failed to upload image');
+      });
+    });
+
+    document.getElementById('showImagesButton').addEventListener('click', function() {
+      fetch('http://localhost:3000/api/images')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch images');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const imagesHTML = data.images.map(image => `<img src="${image.imageUrl}" alt="Uploaded Image">`).join('');
+          const newWindow = window.open();
+          newWindow.document.body.innerHTML = imagesHTML;
+        })
+        .catch(error => {
+          console.error(error);
+          alert('Failed to fetch images');
+        });
+    });
+  </script>
+</body>
+</html>
